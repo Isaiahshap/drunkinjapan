@@ -11,6 +11,7 @@ import StreetAmbience from './StreetAmbience';
 import StreetClock from './StreetClock';
 import StreetTitle from './StreetTitle';
 import MobileControls from './MobileControls';
+import { startStreetAudio } from '@/lib/streetAudio';
 
 function Scene() {
   const playerPos = useRef(new THREE.Vector3(0, 0, 4));
@@ -59,8 +60,9 @@ export default function AnimeSketchWorld() {
         onCreated={({ camera }) => {
           camera.lookAt(0, 1.1, -4);
         }}
+        onPointerDown={() => startStreetAudio()}
         gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
-        style={{ position: 'absolute', inset: 0, zIndex: 0, display: 'block' }}
+        style={{ position: 'absolute', inset: 0, zIndex: 0, display: 'block', touchAction: 'none' }}
       >
         <Scene />
       </Canvas>

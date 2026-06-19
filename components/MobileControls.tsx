@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { touchMove } from '@/lib/playerInput';
+import { startStreetAudio } from '@/lib/streetAudio';
 
 type Direction = keyof typeof touchMove;
 
@@ -38,13 +39,17 @@ function ArrowButton({
       tabIndex={-1}
       style={{
         ...NO_HIGHLIGHT,
-        width: 58,
-        height: 58,
-        borderRadius: 14,
+        width: 64,
+        height: 52,
+        borderRadius: 12,
         border: `1px solid rgba(200, 220, 240, ${pressed ? 0.5 : 0.28})`,
         background: pressed ? 'rgba(32, 48, 78, 0.88)' : 'rgba(16, 26, 48, 0.72)',
         color: '#D8E8F8',
-        fontSize: 22,
+        fontSize: 11,
+        fontFamily: 'system-ui, sans-serif',
+        fontWeight: 600,
+        letterSpacing: '0.04em',
+        textTransform: 'lowercase',
         lineHeight: 1,
         display: 'grid',
         placeItems: 'center',
@@ -56,13 +61,12 @@ function ArrowButton({
       }}
       onPointerDown={(e) => {
         e.preventDefault();
-        e.stopPropagation();
+        startStreetAudio();
         e.currentTarget.setPointerCapture(e.pointerId);
         bind(true);
       }}
       onPointerUp={(e) => {
         e.preventDefault();
-        e.stopPropagation();
         bind(false);
       }}
       onPointerCancel={(e) => {
@@ -117,23 +121,23 @@ export default function MobileControls() {
         zIndex: 20,
         pointerEvents: 'auto',
         display: 'grid',
-        gridTemplateColumns: '58px 58px 58px',
-        gridTemplateRows: '58px 58px',
+        gridTemplateColumns: '64px 64px 64px',
+        gridTemplateRows: '52px 52px',
         gap: 8,
       }}
       onContextMenu={(e) => e.preventDefault()}
     >
       <div style={{ gridColumn: 2, gridRow: 1 }}>
-        <ArrowButton dir="up" label="Move up" />
+        <ArrowButton dir="up" label="up" />
       </div>
       <div style={{ gridColumn: 1, gridRow: 2 }}>
-        <ArrowButton dir="left" label="Move left" />
+        <ArrowButton dir="left" label="left" />
       </div>
       <div style={{ gridColumn: 2, gridRow: 2 }}>
-        <ArrowButton dir="down" label="Move down" />
+        <ArrowButton dir="down" label="down" />
       </div>
       <div style={{ gridColumn: 3, gridRow: 2 }}>
-        <ArrowButton dir="right" label="Move right" />
+        <ArrowButton dir="right" label="right" />
       </div>
     </div>
   );

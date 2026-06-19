@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { isMoving } from '@/lib/playerInput';
+import { registerStreetAudioStart } from '@/lib/streetAudio';
 
 /**
  * CC0 street ambience — BigSoundBank (Joseph SARDIN / Pierre SIBANARCO, public domain).
@@ -11,7 +12,7 @@ import { isMoving } from '@/lib/playerInput';
  * https://bigsoundbank.com
  */
 
-const BG_MUSIC = '/audio/雨のネオン.mp3';
+const BG_MUSIC = '/audio/%E9%9B%A8%E3%81%AE%E3%83%8D%E3%82%AA%E3%83%B3.mp3';
 
 const LAYERS = [
   { src: '/audio/city-rain.ogg', volume: 0.42, playbackRate: 1 },
@@ -56,27 +57,32 @@ export default function StreetAmbience() {
     });
     tracksRef.current = tracks;
 
-    const down = () => {
-      startAudio();
-    };
-
     const startAudio = () => {
       if (startedRef.current) return;
       startedRef.current = true;
 
       const ctx = new AudioContext();
       audioCtxRef.current = ctx;
-      ctx.resume().catch(() => {});
+      void ctx.resume().catch(() => {});
 
       for (const track of tracks) {
-        track.play().catch(() => {});
+        void track.play().catch(() => {});
       }
     };
 
-    const onPointer = () => startAudio();
+    const unregister = registerStreetAudioStart(startAudio);
 
-    window.addEventListener('keydown', down);
-    window.addEventListener('pointerdown', onPointer, { once: true });
+    const onKey = () => {
+      startAudio();
+    };
+
+    const onPointer = () => {
+      startAudio();
+    };
+
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('pointerdown', onPointer);
+    window.addEventListener('touchstart', onPointer, { passive: true });
 
     const drift = window.setInterval(() => {
       if (!startedRef.current) return;
@@ -109,8 +115,10 @@ export default function StreetAmbience() {
     }, 340);
 
     return () => {
-      window.removeEventListener('keydown', down);
+      unregister();
+      window.removeEventListener('keydown', onKey);
       window.removeEventListener('pointerdown', onPointer);
+      window.removeEventListener('touchstart', onPointer);
       window.clearInterval(drift);
       window.clearInterval(steps);
       tracks.forEach((track) => {

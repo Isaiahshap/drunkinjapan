@@ -27,7 +27,7 @@ function RoadSpanUnit({
   playerRef,
 }: {
   spec: RoadSpanSpec;
-  playerRef: MutableRefObject<number>;
+  playerRef: MutableRefObject<THREE.Vector3>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const cableMat = useMemo(() => neonMat(neonPalette.deepInk, 0.95), []);
@@ -37,10 +37,10 @@ function RoadSpanUnit({
   useFrame(() => {
     const g = groupRef.current;
     if (!g) return;
-    const pz = playerRef.current;
-    g.visible = nearPlayer(0, spec.z, pz, SPAN_CULL);
+    const player = playerRef.current;
+    g.visible = nearPlayer(0, spec.z, player, SPAN_CULL);
     if (!g.visible) return;
-    g.position.y = groundSurfaceY(0, spec.z, pz) + spec.height;
+    g.position.y = groundSurfaceY(0, spec.z, player) + spec.height;
   });
 
   return (
@@ -72,7 +72,7 @@ function SidewalkSignUnit({
   playerRef,
 }: {
   spec: SidewalkSignSpec;
-  playerRef: MutableRefObject<number>;
+  playerRef: MutableRefObject<THREE.Vector3>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const poleMat = useMemo(() => neonMat(neonPalette.deepInk), []);
@@ -85,10 +85,10 @@ function SidewalkSignUnit({
   useFrame(() => {
     const g = groupRef.current;
     if (!g) return;
-    const pz = playerRef.current;
-    g.visible = nearPlayer(spec.x, spec.z, pz, SIDEWALK_CULL);
+    const player = playerRef.current;
+    g.visible = nearPlayer(spec.x, spec.z, player, SIDEWALK_CULL);
     if (!g.visible) return;
-    g.position.y = groundSurfaceY(spec.x, spec.z, pz);
+    g.position.y = groundSurfaceY(spec.x, spec.z, player);
   });
 
   return (
@@ -116,7 +116,11 @@ function SidewalkSignUnit({
   );
 }
 
-export function StreetNeonSignage({ playerRef }: { playerRef: React.MutableRefObject<number> }) {
+export function StreetNeonSignage({
+  playerRef,
+}: {
+  playerRef: React.MutableRefObject<THREE.Vector3>;
+}) {
   return (
     <group>
       {ROAD_SPANS.map((span, i) => (

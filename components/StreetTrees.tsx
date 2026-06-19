@@ -44,7 +44,10 @@ function tuneTreeForStreet(tree: Tree, placement: TreePlacement) {
 }
 
 function applyWind(tree: Tree) {
-  const shader = tree.leavesMesh.material.userData.shader as {
+  const material = tree.leavesMesh.material;
+  if (Array.isArray(material)) return false;
+
+  const shader = material.userData.shader as {
     uniforms: {
       uWindStrength: { value: THREE.Vector3 };
       uWindFrequency: { value: number };

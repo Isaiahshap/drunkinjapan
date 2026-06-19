@@ -71,7 +71,6 @@ function ArrowButton({
       }}
       onLostPointerCapture={() => bind(false)}
       onContextMenu={(e) => e.preventDefault()}
-      onSelectStart={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
     >
       {label}
@@ -122,7 +121,6 @@ export default function MobileControls() {
         gridTemplateRows: '58px 58px',
         gap: 8,
       }}
-      onSelectStart={(e) => e.preventDefault()}
       onContextMenu={(e) => e.preventDefault()}
     >
       <div style={{ gridColumn: 2, gridRow: 1 }}>

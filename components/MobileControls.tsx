@@ -4,6 +4,16 @@ import { touchMove } from '@/lib/playerInput';
 
 type Direction = keyof typeof touchMove;
 
+const NO_HIGHLIGHT: React.CSSProperties = {
+  touchAction: 'none',
+  WebkitTapHighlightColor: 'transparent',
+  WebkitTouchCallout: 'none',
+  WebkitUserSelect: 'none',
+  userSelect: 'none',
+  outline: 'none',
+  cursor: 'default',
+};
+
 function setDirection(dir: Direction, active: boolean) {
   touchMove[dir] = active;
 }
@@ -11,53 +21,61 @@ function setDirection(dir: Direction, active: boolean) {
 function ArrowButton({
   dir,
   label,
-  style,
 }: {
   dir: Direction;
   label: string;
-  style?: React.CSSProperties;
 }) {
-  const bind = (active: boolean) => setDirection(dir, active);
+  const [pressed, setPressed] = useState(false);
+  const bind = (active: boolean) => {
+    setPressed(active);
+    setDirection(dir, active);
+  };
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
       aria-label={label}
+      tabIndex={-1}
       style={{
+        ...NO_HIGHLIGHT,
         width: 58,
         height: 58,
         borderRadius: 14,
-        border: '1px solid rgba(200, 220, 240, 0.28)',
-        background: 'rgba(16, 26, 48, 0.72)',
+        border: `1px solid rgba(200, 220, 240, ${pressed ? 0.5 : 0.28})`,
+        background: pressed ? 'rgba(32, 48, 78, 0.88)' : 'rgba(16, 26, 48, 0.72)',
         color: '#D8E8F8',
         fontSize: 22,
         lineHeight: 1,
         display: 'grid',
         placeItems: 'center',
-        boxShadow: '0 4px 18px rgba(0, 0, 0, 0.28)',
-        touchAction: 'none',
-        WebkitTapHighlightColor: 'transparent',
-        userSelect: 'none',
-        ...style,
+        boxShadow: pressed
+          ? '0 2px 10px rgba(0, 0, 0, 0.35)'
+          : '0 4px 18px rgba(0, 0, 0, 0.28)',
+        transform: pressed ? 'scale(0.96)' : 'scale(1)',
+        transition: 'transform 80ms ease, background 80ms ease, border-color 80ms ease',
       }}
       onPointerDown={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         e.currentTarget.setPointerCapture(e.pointerId);
         bind(true);
       }}
       onPointerUp={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         bind(false);
       }}
-      onPointerCancel={() => bind(false)}
-      onPointerLeave={(e) => {
-        if (!e.currentTarget.hasPointerCapture(e.pointerId)) bind(false);
+      onPointerCancel={(e) => {
+        e.preventDefault();
+        bind(false);
       }}
       onLostPointerCapture={() => bind(false)}
       onContextMenu={(e) => e.preventDefault()}
+      onSelectStart={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
     >
       {label}
-    </button>
+    </div>
   );
 }
 
@@ -93,6 +111,7 @@ export default function MobileControls() {
   return (
     <div
       style={{
+        ...NO_HIGHLIGHT,
         position: 'absolute',
         left: 20,
         bottom: 28,
@@ -103,18 +122,20 @@ export default function MobileControls() {
         gridTemplateRows: '58px 58px',
         gap: 8,
       }}
+      onSelectStart={(e) => e.preventDefault()}
+      onContextMenu={(e) => e.preventDefault()}
     >
       <div style={{ gridColumn: 2, gridRow: 1 }}>
-        <ArrowButton dir="up" label="↑" />
+        <ArrowButton dir="up" label="Move up" />
       </div>
       <div style={{ gridColumn: 1, gridRow: 2 }}>
-        <ArrowButton dir="left" label="←" />
+        <ArrowButton dir="left" label="Move left" />
       </div>
       <div style={{ gridColumn: 2, gridRow: 2 }}>
-        <ArrowButton dir="down" label="↓" />
+        <ArrowButton dir="down" label="Move down" />
       </div>
       <div style={{ gridColumn: 3, gridRow: 2 }}>
-        <ArrowButton dir="right" label="→" />
+        <ArrowButton dir="right" label="Move right" />
       </div>
     </div>
   );

@@ -7,4 +7,11 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #8ed8cf;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+  .walk-hint {
+    display: none;
+  }
 }

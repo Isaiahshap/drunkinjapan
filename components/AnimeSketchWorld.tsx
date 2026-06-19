@@ -77,7 +77,7 @@ export default function AnimeSketchWorld() {
         <StreetClock />
         <MobileControls />
         <div
-          className="desktop-hint"
+          className="walk-hint"
           style={{
             position: 'absolute',
             bottom: 20,
@@ -91,34 +91,6 @@ export default function AnimeSketchWorld() {
         >
           WASD / ↑↓←→ to walk · click or press a key for sound
         </div>
-        <div
-          className="mobile-hint"
-          style={{
-            position: 'absolute',
-            bottom: 20,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: '#A8B8C8',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: 12,
-            opacity: 0.65,
-            display: 'none',
-            textAlign: 'center',
-            width: 'min(90vw, 320px)',
-          }}
-        >
-          Use arrows to walk · tap anywhere for sound
-        </div>
-        <style jsx>{`
-          @media (hover: none) and (pointer: coarse), (max-width: 768px) {
-            .desktop-hint {
-              display: none;
-            }
-            .mobile-hint {
-              display: block !important;
-            }
-          }
-        `}</style>
       </div>
     </div>
   );
